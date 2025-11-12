@@ -1,0 +1,50 @@
+services:
+  db:
+    image: mysql:8
+    container_name: sssn-mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpwd
+      MYSQL_DATABASE: surveydb
+      MYSQL_USER: sssn
+      MYSQL_PASSWORD: sssnpwd
+    ports:
+      - "3306:3306"
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-prootpwd"]
+      interval: 5s
+      timeout: 3s
+      retries: 15
+    volumes:
+      - dbdata:/var/lib/mysql
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: sssn-backend
+    environment:
+      DB_HOST: db
+      DB_USER: sssn
+      DB_PASS: sssnpwd
+      DB_NAME: surveydb
+      PORT: "8000"
+    depends_on:
+      db:
+        condition: service_healthy
+    ports:
+      - "8000:8000"
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: sssn-frontend
+    environment:
+      VITE_API_URL: "http://localhost:8000"
+    depends_on:
+      - backend
+    ports:
+      - "8080:80"
+
+volumes:
+  dbdata:
