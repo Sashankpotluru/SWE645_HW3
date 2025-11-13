@@ -1,0 +1,87 @@
+# k8s/mysql.yaml
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: sssn
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: mysql
+  namespace: sssn
+  labels:
+    app: mysql
+spec:
+  clusterIP: None            # headless for StatefulSet
+  selector:
+    app: mysql
+  ports:
+    - name: mysql
+      port: 3306
+      targetPort: 3306
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: mysql
+  namespace: sssn
+  labels:
+    app: mysql
+spec:
+  serviceName: mysql
+  replicas: 1
+  selector:
+    matchLabels:
+      app: mysql
+  template:
+    metadata:
+      labels:
+        app: mysql
+    spec:
+      containers:
+        - name: mysql
+          image: mysql:8.0
+          ports:
+            - containerPort: 3306
+              name: mysql
+          env:
+            - name: MYSQL_DATABASE
+              value: surveydb
+            - name: MYSQL_USER
+              valueFrom:
+                secretKeyRef:
+                  name: mysql-secret
+                  key: MYSQL_USER
+            - name: MYSQL_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: mysql-secret
+                  key: MYSQL_PASSWORD
+            - name: MYSQL_ROOT_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: mysql-secret
+                  key: MYSQL_ROOT_PASSWORD
+          readinessProbe:
+            exec:
+              command: ["bash","-c","mysqladmin ping -h 127.0.0.1 -uroot -p${MYSQL_ROOT_PASSWORD}"]
+            initialDelaySeconds: 20
+            periodSeconds: 10
+          livenessProbe:
+            exec:
+              command: ["bash","-c","mysqladmin ping -h 127.0.0.1 -uroot -p${MYSQL_ROOT_PASSWORD}"]
+            initialDelaySeconds: 30
+            periodSeconds: 20
+          volumeMounts:
+            - name: data
+              mountPath: /var/lib/mysql
+  volumeClaimTemplates:
+    - metadata:
+        name: data
+      spec:
+        accessModes: ["ReadWriteOnce"]
+        resources:
+          requests:
+            storage: 5Gi
+        # If you know your default SC is 'local-path', you can pin it:
+        # storageClassName: local-path
