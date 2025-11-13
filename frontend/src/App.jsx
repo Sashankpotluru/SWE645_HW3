@@ -50,7 +50,7 @@ export default function App() {
     <div className="page">
       <header className="page-header">
         <h1>SSSN — Student Survey</h1>
-        <p className="muted">Team: SSSN (Sashank, Nisha, Srikar, Shriya)</p>
+        <p className="muted">Team: SSSN (Sri Sashank potluru, Nisha Rajput , Srikar Vuppala, Shriya challapuram)</p>
       </header>
 
       <section className="card">
