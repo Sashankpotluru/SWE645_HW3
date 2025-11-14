@@ -1,7 +1,7 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from .db import init_db
-from .routers import survey
+from .routers import surveys
 
 app = FastAPI(title="SSSN Student Survey API", version="1.0.0")
 
