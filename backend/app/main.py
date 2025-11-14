@@ -17,7 +17,7 @@ app.add_middleware(
 def on_startup():
     init_db()  # create tables if not exist
 
-app.include_router(survey.router, prefix="/api", tags=["surveys"])
+app.include_router(surveys.router, prefix="/api", tags=["surveys"])
 
 @app.get("/health")
 def health():
