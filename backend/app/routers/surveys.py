@@ -1,4 +1,3 @@
-# SSSN — CRUD routes
 from typing import List
 from fastapi import APIRouter, HTTPException
 from sqlmodel import select
@@ -10,7 +9,7 @@ router = APIRouter()
 @router.post("/surveys", response_model=SurveyRead)
 def create_survey(payload: SurveyCreate):
     with get_session() as session:
-        survey = Survey.from_orm(payload)
+        survey = Survey(**payload.dict())
         session.add(survey)
         session.commit()
         session.refresh(survey)
