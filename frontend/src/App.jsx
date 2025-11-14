@@ -82,8 +82,7 @@ export default function App() {
       <header className="page-header">
         <h1>SSSN — Student Survey</h1>
         <p className="muted">
-          Team: SSSN (Sri Sashank Potluru, Nisha Rajput, Srikar Vuppala, Shriya
-          Challapuram)
+          Team: SSSN (Sri Sashank Potluru, Nisha Rajput, Srikar Vuppala, Shriya Challapuram)
         </p>
       </header>
 
