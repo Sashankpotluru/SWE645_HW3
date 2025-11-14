@@ -1,7 +1,7 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from .db import init_db
-from .routers import surveys
+from .routers.surveys import router as surveys_router 
 
 app = FastAPI(title="SSSN Student Survey API", version="1.0.0")
 
@@ -17,7 +17,7 @@ app.add_middleware(
 def on_startup():
     init_db()  # create tables if not exist
 
-app.include_router(surveys.router, prefix="/api", tags=["surveys"])
+app.include_router(surveys_router, tags=["surveys"])
 
 @app.get("/health")
 def health():
